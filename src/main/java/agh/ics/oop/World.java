@@ -3,24 +3,32 @@ package agh.ics.oop;
 import java.util.ArrayList;
 
 public class World {
-    static void run(ArrayList<Direction> args) {
+    static void run(ArrayList<MoveDirection> args) {
         //System.out.println(String.join(", ", args));
+        Animal myAnimal = new Animal();
+        System.out.println(myAnimal);
 
-        for (Direction arg: args) {
+
+        for (MoveDirection arg : args) {
             switch (arg) {
                 case FORWARD:
                     System.out.println("zwierzak idzie do przodu");
+                    myAnimal.move(MoveDirection.FORWARD);
                     break;
                 case BACKWARD:
                     System.out.println("zwierzak idzie do tyłu");
+                    myAnimal.move(MoveDirection.BACKWARD);
                     break;
                 case RIGHT:
-                    System.out.println("zwierzak idzie w prawo");
+                    System.out.println("zwierzak skręca w prawo");
+                    myAnimal.move(MoveDirection.RIGHT);
                     break;
                 case LEFT:
-                    System.out.println("zwierzak idzie w lewo");
+                    System.out.println("zwierzak skręca w lewo");
+                    myAnimal.move(MoveDirection.LEFT);
                     break;
             }
+            System.out.println(myAnimal);
         }
 
 
@@ -30,36 +38,10 @@ public class World {
     public static void main(String[] args) {
         System.out.println("Start systemu");
 
-        /*
-        Vector2d position1 = new Vector2d(1,2);
-        System.out.println(position1);
-        Vector2d position2 = new Vector2d(-2,1);
-        System.out.println(position2);
-        System.out.println(position1.add(position2));
-        */
-
-        //System.out.println(MapDirection.NORTH.next().toUnitVector());
-
-        ArrayList <Direction> dirs = new ArrayList<>();
-
-        for (String arg : args) {
-            switch(arg) {
-                case "f":
-                    dirs.add(Direction.FORWARD);
-                    break;
-                case "b":
-                    dirs.add(Direction.BACKWARD);
-                    break;
-                case "l":
-                    dirs.add(Direction.LEFT);
-                    break;
-                case "r":
-                    dirs.add(Direction.RIGHT);
-                    break;
-            }
-        }
+        ArrayList <MoveDirection> dirs = OptionsParser.parse(args);
 
         run(dirs);
+
         System.out.println("Stop systemu");
     }
 }
