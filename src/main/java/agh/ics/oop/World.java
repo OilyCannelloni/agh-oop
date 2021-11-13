@@ -9,13 +9,20 @@ public class World {
                 new Vector2d(2,2),
                 new Vector2d(3,4)
         };
-        IEngine engine = new SimulationEngine(directions, map, positions);
-        engine.run();
-        MapVisualizer visualizer = new MapVisualizer(map);
-        String frame = visualizer.draw(new Vector2d(0, 0), new Vector2d(4, 4));
-        System.out.println(frame);
 
-        BetterMapVisualizer bettervis = new BetterMapVisualizer(map);
-        bettervis.draw(new Vector2d(0, 0), new Vector2d(4, 4));
+        BetterMapVisualizer visualizer = new BetterMapVisualizer(
+                map,
+                new Vector2d(0, 0),
+                new Vector2d(4, 4),
+                500
+        );
+
+        IEngine engine = new SimulationEngine(directions, map, positions);
+        engine.run(visualizer);
+
+//        MapVisualizer visualizer = new MapVisualizer(map);
+//        String frame = visualizer.draw(new Vector2d(0, 0), new Vector2d(4, 4));
+//        System.out.println(frame);
+
     }
 }

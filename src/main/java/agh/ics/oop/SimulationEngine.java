@@ -25,4 +25,15 @@ public class SimulationEngine implements IEngine {
             animal.move(this.moves[i]);
         }
     }
+
+    public void run(BetterMapVisualizer visualizer) {
+        visualizer.draw();
+
+        for (int i = 0; i < this.moves.length; i++){
+            int animalID = i % this.animalCount;
+            Animal animal = this.animals.get(animalID);
+            animal.move(this.moves[i]);
+            visualizer.draw();
+        }
+    }
 }

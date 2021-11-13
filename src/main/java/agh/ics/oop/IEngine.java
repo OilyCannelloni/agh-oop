@@ -14,4 +14,5 @@ public interface IEngine {
      *
      */
     void run();
+    void run(BetterMapVisualizer visualizer);
 }
