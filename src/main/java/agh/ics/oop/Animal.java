@@ -3,13 +3,28 @@ package agh.ics.oop;
 public class Animal {
     private MapDirection facing;
     private Vector2d position;
+    private IWorldMap map;
+
     public Animal(){
         this.facing = MapDirection.NORTH;
         this.position = new Vector2d(2, 2);
     }
 
+    public Animal(IWorldMap map){
+        this.map = map;
+        this.position = new Vector2d(0, 0);
+        this.facing = MapDirection.NORTH;
+        this.map.place(this);
+    }
+
+    public Animal(IWorldMap map, Vector2d initialPosition){
+        this.map = map;
+        this.position = initialPosition;
+        this.facing = MapDirection.NORTH;
+    }
+
     public String toString(){
-        return String.format("Pozycja: %s\tOrientacja: %s", this.position, this.facing);
+        return this.facing.toString();
     }
 
     public void move(MoveDirection direction){
@@ -28,7 +43,7 @@ public class Animal {
                 target = this.position.subtract(this.facing.toUnitVector());
                 break;
         }
-        if (target.precedes(new Vector2d(4, 4)) && target.follows(new Vector2d(0, 0))) {
+        if (this.map.canMoveTo(target)) {
             this.position = target;
         }
     }
