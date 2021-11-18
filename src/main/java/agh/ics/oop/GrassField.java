@@ -6,14 +6,12 @@ import java.util.Random;
 
 public class GrassField implements IWorldMap {
     private final Vector2d origin = new Vector2d(0, 0);
-    private final ArrayList<Animal> animals;
-    private ArrayList<Grass> grassTiles;
-    private int nGrassTiles;
+    private final ArrayList<IMapElement> mapElements;
+    private final int nGrassTiles;
 
     public GrassField(int nGrassTiles){
-        this.animals = new ArrayList<>();
         this.nGrassTiles = nGrassTiles;
-        this.grassTiles = new ArrayList<>();
+        this.mapElements = new ArrayList<>();
         this.generateGrass();
     }
 
@@ -36,61 +34,58 @@ public class GrassField implements IWorldMap {
         shuffleArray(range, this.nGrassTiles);
         for (int i = 0; i < nGrassTiles; i++) {
             Vector2d tilePosition = new Vector2d(range[i] % bound, range[i] / bound);
-            this.grassTiles.add(new Grass(tilePosition));
+            this.mapElements.add(new Grass(tilePosition));
         }
     }
 
     public boolean canMoveTo(Vector2d position) {
         if (!position.follows(this.origin)) return false;
-        for (Animal animal : this.animals) {
-            if (animal.getPosition().equals(position)) return false;
+        for (IMapElement element : this.mapElements) {
+            if (element instanceof Animal && element.getPosition().equals(position)) return false;
         }
         return true;
     }
 
     public boolean place(Animal animal) {
         Vector2d position = animal.getPosition();
-        if (this.isOccupied(position)) return false;
-        this.animals.add(animal);
+        if (!this.canMoveTo(position)) return false;
+        this.mapElements.add(animal);
         return true;
     }
 
     public boolean isOccupied(Vector2d position) {
-        for (Animal animal : this.animals) {
-            Vector2d aniPos = animal.getPosition();
-            if (aniPos.equals(position)) return true;
-        }
-
-        for (Grass grass : this.grassTiles) {
-            Vector2d grassPos = grass.getPosition();
-            if (grassPos.equals(position)) return true;
+        for (IMapElement element : this.mapElements) {
+            Vector2d elementPosition = element.getPosition();
+            if (elementPosition.equals(position)) return true;
         }
         return false;
     }
 
     public Object objectAt(Vector2d position) {
-        for (Animal animal : this.animals) {
-            Vector2d animalPosition = animal.getPosition();
-            if (animalPosition.equals(position)) return animal;
+        ArrayList<IMapElement> targets = new ArrayList<>();
+
+        for (IMapElement element : this.mapElements) {
+            Vector2d elementPosition = element.getPosition();
+            if (elementPosition.equals(position)) targets.add(element);
         }
 
-        for (Grass grass : this.grassTiles) {
-            Vector2d grassPosition = grass.getPosition();
-            if(grassPosition.equals(position)) return grass;
+        int maxPriority = -1;
+        IMapElement bestTarget = null;
+        for (IMapElement target : targets) {
+            int targetPriority = target.getPriority();
+            if (targetPriority > maxPriority) {
+                maxPriority = targetPriority;
+                bestTarget = target;
+            }
         }
 
-        return null;
+        return bestTarget;
     }
 
     public String toString() {
         int max_x = 0, max_y = 0;
-        for (Grass grass : this.grassTiles) {
-            Vector2d position = grass.getPosition();
-            max_x = Math.max(max_x, position.x);
-            max_y = Math.max(max_y, position.y);
-        }
-        for (Animal animal : this.animals) {
-            Vector2d position = animal.getPosition();
+        for (IMapElement element : this.mapElements) {
+            Vector2d position = element.getPosition();
             max_x = Math.max(max_x, position.x);
             max_y = Math.max(max_y, position.y);
         }
