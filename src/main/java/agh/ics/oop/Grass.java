@@ -1,20 +1,21 @@
 package agh.ics.oop;
 
-public class Grass implements IMapElement {
-    private final Vector2d position;
+public class Grass extends AbstractWorldMapElement {
+    private final GrassField map;
 
-    public Grass(Vector2d position){
-        this.position = position;
+    public Grass(GrassField map, Vector2d position){
+        super(position);
+        this.priority = 1;
+        this.map = map;
     }
 
-    public Vector2d getPosition() {
-        return this.position;
+    @Override
+    public void onInteraction(IMapElement element){
+        if (element instanceof Animal) this.map.growRandomGrass();
+        this.map.removeElement(this);
     }
 
-    public int getPriority(){
-        return 1;
-    }
-
+    @Override
     public String toString(){
         return "*";
     }

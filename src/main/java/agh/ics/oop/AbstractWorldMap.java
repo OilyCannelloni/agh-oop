@@ -1,12 +1,15 @@
 package agh.ics.oop;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Random;
 
 public abstract class AbstractWorldMap implements IWorldMap {
     protected ArrayList<IMapElement> mapElements;
 
     public AbstractWorldMap(){
         this.mapElements = new ArrayList<>();
+
     }
 
     protected boolean isWithinBounds(Vector2d position) {
@@ -26,6 +29,46 @@ public abstract class AbstractWorldMap implements IWorldMap {
         );
     }
 
+    protected static void shuffleArray(int[] array, int firstN) {
+        if (firstN >= array.length) return;
+        int index, temp;
+        Random random = new Random(System.currentTimeMillis());
+        for (int i = 0; i < firstN; i++) {
+            index = i + random.nextInt(array.length - i);
+            temp = array[index];
+            array[index] = array[i];
+            array[i] = temp;
+        }
+    }
+
+    public Vector2d getRandomEmptyTile(Rect2D area){
+        int width = area.getDimensions().x;
+        int height = area.getDimensions().y;
+        assert width > 0 && height > 0;
+        int flatAreaLength = width*height;
+
+        int nObjects = mapElements.size();
+        int[] occupiedPositions = new int[nObjects + 1];
+        int oP = 0;
+        for (IMapElement element : this.mapElements){
+            Vector2d position = element.getPosition();
+            if (!area.contains(position)) continue;
+            occupiedPositions[oP++] = position.toLinear(area);
+        }
+        occupiedPositions[nObjects] = -1;
+        Arrays.sort(occupiedPositions);
+
+        int[] availablePositions = new int[flatAreaLength];
+        int aP = 0; oP = 0;
+        for (int i = 0; i < flatAreaLength; i++) {
+            if (i != occupiedPositions[oP]) availablePositions[aP++] = i;
+            else oP++;
+        }
+
+        shuffleArray(availablePositions, 1);
+        return new Vector2d(availablePositions[0], area);
+    }
+
     public boolean canMoveTo(Vector2d position) {
         if (!this.isWithinBounds(position)) return false;
         for (IMapElement element : this.mapElements) {
@@ -39,6 +82,19 @@ public abstract class AbstractWorldMap implements IWorldMap {
         if (!this.canMoveTo(position)) return false;
         this.mapElements.add(animal);
         return true;
+    }
+
+    public boolean placeElement(IMapElement element){
+        Vector2d position = element.getPosition();
+        if (this.isOccupied(position)) return false;
+        this.mapElements.add(element);
+        return true;
+    }
+
+    public void removeElement(IMapElement element) {
+        if (!this.mapElements.contains(element))
+            System.out.printf("Cannot remove grass from %s: it does not exist!", element.getPosition());
+        this.mapElements.remove(element);
     }
 
     public boolean isOccupied(Vector2d position) {

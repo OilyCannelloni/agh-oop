@@ -1,32 +1,17 @@
 package agh.ics.oop;
 
-public class Animal implements IMapElement {
+public class Animal extends AbstractWorldMapElement {
     private MapDirection facing;
-    private Vector2d position;
-    private IWorldMap map;
-
-    public Animal(){
-        this.facing = MapDirection.NORTH;
-        this.position = new Vector2d(2, 2);
-    }
-
-    public Animal(IWorldMap map){
-        this.map = map;
-        this.position = new Vector2d(0, 0);
-        this.facing = MapDirection.NORTH;
-        this.map.place(this);
-    }
+    private final IWorldMap map;
 
     public Animal(IWorldMap map, Vector2d initialPosition){
+        super(initialPosition);
         this.map = map;
-        this.position = initialPosition;
         this.facing = MapDirection.NORTH;
+        this.priority = 100;
     }
 
-    public int getPriority(){
-        return 100;
-    }
-
+    @Override
     public String toString(){
         return this.facing.toString();
     }
@@ -48,12 +33,13 @@ public class Animal implements IMapElement {
                 break;
         }
         if (this.map.canMoveTo(target)) {
+            Object object = this.map.objectAt(target);
+            if (object instanceof IMapElement) {
+                IMapElement element = (IMapElement) object;
+                element.onInteraction(this);
+            }
             this.position = target;
         }
-    }
-
-    public Vector2d getPosition(){
-        return this.position;
     }
 
     public MapDirection getFacing(){

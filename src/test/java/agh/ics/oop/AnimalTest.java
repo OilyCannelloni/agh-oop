@@ -34,7 +34,8 @@ public class AnimalTest {
 
         for (int i = 0; i < 5; i++){
             ArrayList<MoveDirection> dirs = OptionsParser.parse(sequences[i]);
-            Animal myAnimal = new Animal();
+            IWorldMap map = new RectangularMap(5, 5);
+            Animal myAnimal = new Animal(map, new Vector2d(2, 2));
             for (MoveDirection dir : dirs) {
                 myAnimal.move(dir);
             }

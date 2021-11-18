@@ -14,7 +14,7 @@ public class World {
                 map,
                 new Vector2d(0, 0),
                 new Vector2d(11, 11),
-                500
+                250
         );
 
         IEngine engine = new SimulationEngine(directions, map, positions);

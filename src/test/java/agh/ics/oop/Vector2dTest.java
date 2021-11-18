@@ -80,4 +80,20 @@ public class Vector2dTest {
         Vector2d v = new Vector2d(2, -3);
         Assertions.assertEquals(v.opposite(), new Vector2d(-2, 3));
     }
+
+    @Test
+    public void toLinearTest() {
+        Rect2D area = new Rect2D(new Vector2d(2, 3), new Vector2d(6, 6));
+        Vector2d v1 = new Vector2d(2, 3);
+        Vector2d v2 = new Vector2d(4, 4);
+        Assertions.assertEquals(0, v1.toLinear(area));
+        Assertions.assertEquals(7, v2.toLinear(area));
+    }
+
+    @Test
+    public void Vector2dFromLinearTest(){
+        Rect2D area = new Rect2D(new Vector2d(2, 2), new Vector2d(6, 6));
+        Assertions.assertEquals(new Vector2d(2, 1), new Vector2d(7, area));
+        Assertions.assertEquals(new Vector2d(0, 0), new Vector2d(0, area));
+    }
 }

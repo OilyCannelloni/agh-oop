@@ -9,6 +9,12 @@ public class Vector2d {
         this.y = y;
     }
 
+    public Vector2d(int linear, Rect2D area) {
+        Vector2d dimensions = area.getDimensions();
+        this.x = linear % dimensions.x;
+        this.y = linear / dimensions.x;
+    }
+
     public String toString(){
         return String.format("(%d,%d)", this.x, this.y);
     }
@@ -54,8 +60,10 @@ public class Vector2d {
         return new Vector2d(-this.x, -this.y);
     }
 
-
-
-
-
+    public int toLinear(Rect2D area) {
+        assert area.contains(this);
+        Vector2d dimensions = area.getDimensions();
+        Vector2d relative = this.subtract(area.lowerLeft);
+        return dimensions.x * (relative.y) + relative.x;
+    }
 }
