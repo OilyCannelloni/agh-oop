@@ -41,7 +41,7 @@ public class BetterMapVisualizer {
                 int map_x = i + this.bottomLeft.x - 1;
                 int map_y = this.topRight.y - (j - 1);
                 Object obj = this.map.objectAt(new Vector2d(map_x, map_y));
-                if (!(obj instanceof Animal)) contents[j][i] = " ";
+                if (!(obj instanceof IMapElement)) contents[j][i] = " ";
                 else contents[j][i] = obj.toString();
             }
         }
@@ -54,7 +54,7 @@ public class BetterMapVisualizer {
         this.grid = new JTable(contents, columnNames);
         grid.setBounds(0, 0, this.fieldWidth*this.gridWidth, this.fieldHeight*this.gridHeight);
         grid.setRowHeight(this.fieldHeight);
-        grid.setFont(new Font("Ubuntu Mono", Font.PLAIN, this.fieldHeight));
+        grid.setFont(new Font("Ubuntu Mono", Font.PLAIN, (int) (this.fieldHeight*0.8)));
 
         this.frame.add(grid);
         this.frame.setVisible(true);
