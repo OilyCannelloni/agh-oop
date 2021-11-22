@@ -38,19 +38,7 @@ public class GrassField extends AbstractWorldMap {
                     range[i] % this.grassGrowthBound,
                     range[i] / this.grassGrowthBound
             );
-            this.mapElements.add(new Grass(this, tilePosition));
+            this.mapElements.put(tilePosition, new Grass(this, tilePosition));
         }
-    }
-
-    public String toString() {
-        int max_x = 0, max_y = 0;
-        for (IMapElement element : this.mapElements) {
-            Vector2d position = element.getPosition();
-            max_x = Math.max(max_x, position.x);
-            max_y = Math.max(max_y, position.y);
-        }
-
-        MapVisualizer visualizer = new MapVisualizer(this);
-        return visualizer.draw(this.origin, new Vector2d(max_x, max_y));
     }
 }

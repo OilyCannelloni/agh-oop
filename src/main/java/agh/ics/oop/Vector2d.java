@@ -1,5 +1,6 @@
 package agh.ics.oop;
 import java.lang.Math;
+import java.util.Objects;
 
 
 public class Vector2d {
@@ -65,5 +66,10 @@ public class Vector2d {
         Vector2d dimensions = area.getDimensions();
         Vector2d relative = this.subtract(area.lowerLeft);
         return dimensions.x * (relative.y) + relative.x;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.x, this.y);
     }
 }

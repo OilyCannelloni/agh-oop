@@ -17,7 +17,7 @@ public class World {
                 250
         );
 
-        IEngine engine = new SimulationEngine(directions, map, positions);
+        SimulationEngine engine = new SimulationEngine(directions, map, positions);
         engine.run(visualizer);
 
         System.out.println(map);

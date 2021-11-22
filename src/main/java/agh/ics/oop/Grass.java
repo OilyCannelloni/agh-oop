@@ -12,7 +12,7 @@ public class Grass extends AbstractWorldMapElement {
     @Override
     public void onInteraction(IMapElement element){
         if (element instanceof Animal) this.map.growRandomGrass();
-        this.map.removeElement(this);
+        this.map.removeElement(this.getPosition());
     }
 
     @Override

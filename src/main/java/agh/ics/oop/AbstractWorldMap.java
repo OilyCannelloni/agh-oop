@@ -1,15 +1,15 @@
 package agh.ics.oop;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Random;
 
-public abstract class AbstractWorldMap implements IWorldMap {
-    protected ArrayList<IMapElement> mapElements;
+public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObserver {
+    protected Map<Vector2d, IMapElement> mapElements;
 
     public AbstractWorldMap(){
-        this.mapElements = new ArrayList<>();
-
+        this.mapElements = new LinkedHashMap<>();
     }
 
     protected boolean isWithinBounds(Vector2d position) {
@@ -18,8 +18,7 @@ public abstract class AbstractWorldMap implements IWorldMap {
 
     protected Rect2D getMinimalBoundingBox(){
         int maxX = 0, maxY = 0;
-        for (IMapElement element : this.mapElements) {
-            Vector2d position = element.getPosition();
+        for (Vector2d position : this.mapElements.keySet()) {
             maxX = Math.max(maxX, position.x);
             maxY = Math.max(maxY, position.y);
         }
@@ -41,6 +40,11 @@ public abstract class AbstractWorldMap implements IWorldMap {
         }
     }
 
+    public void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
+        IMapElement element =  this.removeElement(oldPosition);
+        this.placeElement(element, newPosition);
+    }
+
     public Vector2d getRandomEmptyTile(Rect2D area){
         int width = area.getDimensions().x;
         int height = area.getDimensions().y;
@@ -50,8 +54,7 @@ public abstract class AbstractWorldMap implements IWorldMap {
         int nObjects = mapElements.size();
         int[] occupiedPositions = new int[nObjects + 1];
         int oP = 0;
-        for (IMapElement element : this.mapElements){
-            Vector2d position = element.getPosition();
+        for (Vector2d position : this.mapElements.keySet()){
             if (!area.contains(position)) continue;
             occupiedPositions[oP++] = position.toLinear(area);
         }
@@ -71,8 +74,8 @@ public abstract class AbstractWorldMap implements IWorldMap {
 
     public boolean canMoveTo(Vector2d position) {
         if (!this.isWithinBounds(position)) return false;
-        for (IMapElement element : this.mapElements) {
-            if (element instanceof Animal && element.getPosition().equals(position)) return false;
+        for (Map.Entry<Vector2d, IMapElement> entry : this.mapElements.entrySet()) {
+            if (entry.getValue() instanceof Animal && entry.getKey().equals(position)) return false;
         }
         return true;
     }
@@ -80,50 +83,38 @@ public abstract class AbstractWorldMap implements IWorldMap {
     public boolean place(Animal animal) {
         Vector2d position = animal.getPosition();
         if (!this.canMoveTo(position)) return false;
-        this.mapElements.add(animal);
+        this.mapElements.put(position, animal);
         return true;
     }
 
     public boolean placeElement(IMapElement element){
         Vector2d position = element.getPosition();
         if (this.isOccupied(position)) return false;
-        this.mapElements.add(element);
+        this.mapElements.put(position, element);
         return true;
     }
 
-    public void removeElement(IMapElement element) {
-        if (!this.mapElements.contains(element))
-            System.out.printf("Cannot remove grass from %s: it does not exist!", element.getPosition());
-        this.mapElements.remove(element);
+    public void placeElement(IMapElement element, Vector2d position){
+        if (
+                this.isOccupied(position)
+                && this.mapElements.get(position).getPriority() <= element.getPriority()
+        ) return;
+        this.mapElements.put(position, element);
+    }
+
+    public IMapElement removeElement(Vector2d position) {
+        IMapElement element = this.mapElements.remove(position);
+        if (element == null)
+            System.out.printf("Cannot remove element from %s: it does not exist!", position);
+        return element;
     }
 
     public boolean isOccupied(Vector2d position) {
-        for (IMapElement element : this.mapElements) {
-            Vector2d elementPosition = element.getPosition();
-            if (elementPosition.equals(position)) return true;
-        }
-        return false;
+        return this.mapElements.get(position) != null;
     }
 
     public Object objectAt(Vector2d position) {
-        ArrayList<IMapElement> targets = new ArrayList<>();
-
-        for (IMapElement element : this.mapElements) {
-            Vector2d elementPosition = element.getPosition();
-            if (elementPosition.equals(position)) targets.add(element);
-        }
-
-        int maxPriority = -1;
-        IMapElement bestTarget = null;
-        for (IMapElement target : targets) {
-            int targetPriority = target.getPriority();
-            if (targetPriority > maxPriority) {
-                maxPriority = targetPriority;
-                bestTarget = target;
-            }
-        }
-
-        return bestTarget;
+        return this.mapElements.get(position);
     }
 
     public String toString(){
