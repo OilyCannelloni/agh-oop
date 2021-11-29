@@ -42,7 +42,6 @@ public class SimulationEngineTest {
 
             MapVisualizer visualizer = new MapVisualizer(map);
             String frame = visualizer.draw(new Vector2d(0, 0), new Vector2d(4, 4));
-            System.out.println(frame);
 
             for (int a = 0; a < animalCount[i]; a++) {
                 Object checkedObject = map.objectAt(finalPositions[i][a]);
@@ -52,9 +51,15 @@ public class SimulationEngineTest {
             }
         }
 
-
-
-
-
+        try {
+            Vector2d[] startPositions = {new Vector2d(2, 2), new Vector2d(2, 2)};
+            MoveDirection[] directions = OptionsParser.parse(
+                    new String[]{"r", "l", "f", "f", "f", "l", "f", "f", "f", "f"}
+            ).toArray(new MoveDirection[0]);
+            IWorldMap map = new RectangularMap(5, 5);
+            IEngine engine = new SimulationEngine(directions, map, startPositions);
+            engine.run();
+            Assertions.fail();
+        } catch (IllegalArgumentException ignored) {}
     }
 }

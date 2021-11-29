@@ -32,15 +32,26 @@ public class AnimalTest {
                 MapDirection.WEST
         };
 
-        for (int i = 0; i < 5; i++){
+        for (int i = 0; i < 4; i++){
             ArrayList<MoveDirection> dirs = OptionsParser.parse(sequences[i]);
             IWorldMap map = new RectangularMap(5, 5);
             Animal myAnimal = new Animal(map, new Vector2d(2, 2));
+            map.place(myAnimal);
             for (MoveDirection dir : dirs) {
                 myAnimal.move(dir);
             }
             Assertions.assertEquals(finalPositions[i], myAnimal.getPosition());
             Assertions.assertEquals(finalFacings[i], myAnimal.getFacing());
         }
+
+        try {
+            ArrayList<MoveDirection> dirs = OptionsParser.parse(sequences[4]);
+            IWorldMap map = new RectangularMap(5, 5);
+            Animal myAnimal = new Animal(map, new Vector2d(2, 2));
+            for (MoveDirection dir : dirs) {
+                myAnimal.move(dir);
+            }
+            Assertions.fail();
+        } catch (IllegalArgumentException ignored) {}
     }
 }

@@ -23,6 +23,8 @@ public class OptionsParser {
                 case "right":
                     dirs.add(MoveDirection.RIGHT);
                     break;
+                default:
+                    throw new IllegalArgumentException(arg + " is not legal move specification");
             }
         }
         return dirs;

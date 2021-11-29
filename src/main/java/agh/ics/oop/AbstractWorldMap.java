@@ -82,14 +82,16 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
 
     public boolean place(Animal animal) {
         Vector2d position = animal.getPosition();
-        if (!this.canMoveTo(position)) return false;
+        if (!this.canMoveTo(position))
+            throw new IllegalArgumentException("Cannot place animal at " + position);
         this.mapElements.put(position, animal);
         return true;
     }
 
     public boolean placeElement(IMapElement element){
         Vector2d position = element.getPosition();
-        if (this.isOccupied(position)) return false;
+        if (this.isOccupied(position))
+            throw new IllegalArgumentException("Cannot place element at " + position);
         this.mapElements.put(position, element);
         return true;
     }
@@ -98,14 +100,14 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
         if (
                 this.isOccupied(position)
                 && this.mapElements.get(position).getPriority() <= element.getPriority()
-        ) return;
+        ) throw new IllegalArgumentException("Cannot place element at " + position);
         this.mapElements.put(position, element);
     }
 
     public IMapElement removeElement(Vector2d position) {
         IMapElement element = this.mapElements.remove(position);
         if (element == null)
-            System.out.printf("Cannot remove element from %s: it does not exist!", position);
+            throw new IllegalArgumentException("No element to remove at " + position);
         return element;
     }
 
