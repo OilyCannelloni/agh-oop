@@ -11,7 +11,9 @@ public class RectangularMapTest {
         Animal a3 = new Animal(map, new Vector2d(1, 1));
         map.place(a1);
         map.place(a2);
-        map.place(a3);
+        try {
+            map.place(a3);
+        } catch (IllegalArgumentException ignore) {}
         Assertions.assertEquals(a1, map.objectAt(new Vector2d(1, 1)));
         Assertions.assertEquals(a2, map.objectAt(new Vector2d(2, 3)));
     }

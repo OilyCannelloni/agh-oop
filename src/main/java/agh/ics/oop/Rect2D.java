@@ -16,4 +16,15 @@ public class Rect2D {
     public Vector2d getDimensions() {
         return new Vector2d(upperRight.x - lowerLeft.x + 1, upperRight.y - lowerLeft.y + 1);
     }
+
+    public boolean equals(Object other){
+        if (this == other) return true;
+        if (! (other instanceof Rect2D)) return false;
+        Rect2D that = (Rect2D) other;
+        return this.lowerLeft.equals(that.lowerLeft) && this.upperRight.equals(that.upperRight);
+    }
+
+    public String toString() {
+        return this.lowerLeft.toString() + " " + this.upperRight.toString();
+    }
 }

@@ -7,25 +7,15 @@ import java.util.Random;
 
 public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObserver {
     protected Map<Vector2d, IMapElement> mapElements;
+    protected MapBoundary mapBoundary;
 
     public AbstractWorldMap(){
         this.mapElements = new LinkedHashMap<>();
+        this.mapBoundary = new MapBoundary();
     }
 
     protected boolean isWithinBounds(Vector2d position) {
         return true;
-    }
-
-    protected Rect2D getMinimalBoundingBox(){
-        int maxX = 0, maxY = 0;
-        for (Vector2d position : this.mapElements.keySet()) {
-            maxX = Math.max(maxX, position.x);
-            maxY = Math.max(maxY, position.y);
-        }
-        return new Rect2D(
-                new Vector2d(0, 0),
-                new Vector2d(maxX, maxY)
-        );
     }
 
     protected static void shuffleArray(int[] array, int firstN) {
@@ -85,6 +75,7 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
         if (!this.canMoveTo(position))
             throw new IllegalArgumentException("Cannot place animal at " + position);
         this.mapElements.put(position, animal);
+        this.mapBoundary.insert(animal);
         return true;
     }
 
@@ -93,6 +84,7 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
         if (this.isOccupied(position))
             throw new IllegalArgumentException("Cannot place element at " + position);
         this.mapElements.put(position, element);
+        this.mapBoundary.insert(element);
         return true;
     }
 
@@ -102,12 +94,14 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
                 && this.mapElements.get(position).getPriority() <= element.getPriority()
         ) throw new IllegalArgumentException("Cannot place element at " + position);
         this.mapElements.put(position, element);
+        this.mapBoundary.insert(element);
     }
 
     public IMapElement removeElement(Vector2d position) {
         IMapElement element = this.mapElements.remove(position);
         if (element == null)
             throw new IllegalArgumentException("No element to remove at " + position);
+        this.mapBoundary.remove(element);
         return element;
     }
 
@@ -120,7 +114,7 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
     }
 
     public String toString(){
-        Rect2D boundingBox = this.getMinimalBoundingBox();
+        Rect2D boundingBox = this.mapBoundary.getBoundingBox();
         MapVisualizer visualizer = new MapVisualizer(this);
         return visualizer.draw(boundingBox.lowerLeft, boundingBox.upperRight);
     }

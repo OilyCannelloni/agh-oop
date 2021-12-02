@@ -38,7 +38,7 @@ public class GrassField extends AbstractWorldMap {
                     range[i] % this.grassGrowthBound,
                     range[i] / this.grassGrowthBound
             );
-            this.mapElements.put(tilePosition, new Grass(this, tilePosition));
+            this.placeElement(new Grass(this, tilePosition), tilePosition);
         }
     }
 }
