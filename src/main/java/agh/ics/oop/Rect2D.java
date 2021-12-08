@@ -27,4 +27,8 @@ public class Rect2D {
     public String toString() {
         return this.lowerLeft.toString() + " " + this.upperRight.toString();
     }
+
+    public Vector2d relative(Vector2d point) {
+        return point.subtract(this.lowerLeft);
+    }
 }

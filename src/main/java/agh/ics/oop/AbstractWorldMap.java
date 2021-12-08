@@ -118,4 +118,8 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
         MapVisualizer visualizer = new MapVisualizer(this);
         return visualizer.draw(boundingBox.lowerLeft, boundingBox.upperRight);
     }
+
+    public Rect2D getBoundingBox() {
+        return this.mapBoundary.getBoundingBox();
+    }
 }
