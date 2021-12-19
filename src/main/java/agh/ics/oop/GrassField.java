@@ -41,4 +41,9 @@ public class GrassField extends AbstractWorldMap {
             this.placeElement(new Grass(this, tilePosition), tilePosition);
         }
     }
+
+    @Override
+    public void positionUpdated(Vector2d position) {
+
+    }
 }

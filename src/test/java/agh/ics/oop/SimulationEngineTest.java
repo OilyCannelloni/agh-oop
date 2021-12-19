@@ -3,6 +3,8 @@ package agh.ics.oop;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 public class SimulationEngineTest {
     @Test
     public void runTest(){
@@ -34,9 +36,9 @@ public class SimulationEngineTest {
 
 
         for (int i = 0; i < moveSequences.length; i++){
-            MoveDirection[] directions = OptionsParser.parse(moveSequences[i]).toArray(new MoveDirection[0]);
+            MoveDirection[] directions = OptionsParser.parse(List.of(moveSequences[i])).toArray(new MoveDirection[0]);
             IWorldMap map = new RectangularMap(5, 5);
-            IEngine engine = new SimulationEngine(directions, map, startingPositions[i]);
+            IEngine engine = new SimulationEngine(null, directions, map, startingPositions[i], 0);
 
             engine.run();
 
@@ -54,10 +56,10 @@ public class SimulationEngineTest {
         try {
             Vector2d[] startPositions = {new Vector2d(2, 2), new Vector2d(2, 2)};
             MoveDirection[] directions = OptionsParser.parse(
-                    new String[]{"r", "l", "f", "f", "f", "l", "f", "f", "f", "f"}
+                    List.of(new String[]{"r", "l", "f", "f", "f", "l", "f", "f", "f", "f"})
             ).toArray(new MoveDirection[0]);
             IWorldMap map = new RectangularMap(5, 5);
-            IEngine engine = new SimulationEngine(directions, map, startPositions);
+            IEngine engine = new SimulationEngine(null, directions, map, startPositions, 0);
             engine.run();
             Assertions.fail();
         } catch (IllegalArgumentException ignored) {}

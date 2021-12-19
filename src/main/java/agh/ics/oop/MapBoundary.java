@@ -65,4 +65,7 @@ public class MapBoundary implements IPositionChangeObserver {
         this.update(this.xElementList, newPosition);
         this.update(this.yElementList, newPosition);
     }
+
+    @Override
+    public void positionUpdated(Vector2d position) {}
 }

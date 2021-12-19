@@ -1,5 +1,7 @@
 package agh.ics.oop;
 
+import agh.ics.oop.gui.App;
+
 import java.util.ArrayList;
 
 public class Animal extends AbstractWorldMapElement {
@@ -7,13 +9,14 @@ public class Animal extends AbstractWorldMapElement {
     private final IWorldMap map;
     protected ArrayList<IPositionChangeObserver> observers;
 
-    public Animal(IWorldMap map, Vector2d initialPosition){
+    public Animal(App app, IWorldMap map, Vector2d initialPosition){
         super(initialPosition);
         this.map = map;
         this.facing = MapDirection.NORTH;
         this.priority = 100;
         this.observers = new ArrayList<>();
         this.addObserver((IPositionChangeObserver) map);
+        if (app != null) this.addObserver(app);
     }
 
     public void addObserver(IPositionChangeObserver observer) {
@@ -35,6 +38,19 @@ public class Animal extends AbstractWorldMapElement {
         return this.facing.toString();
     }
 
+    @Override
+    public String getImagePath() {
+        String dirChar = "";
+        switch (this.facing) {
+            case NORTH: dirChar = "n"; break;
+            case WEST: dirChar = "w"; break;
+            case SOUTH: dirChar = "s"; break;
+            case EAST: dirChar = "e"; break;
+        }
+
+        return "file:.\\src\\main\\resources\\animal_" + dirChar + ".png";
+    }
+
     public void move(MoveDirection direction){
         Vector2d target = new Vector2d(this.position.x, this.position.y);
         switch (direction) {
@@ -51,6 +67,12 @@ public class Animal extends AbstractWorldMapElement {
                 target = this.position.subtract(this.facing.toUnitVector());
                 break;
         }
+        if (target.equals(this.position)) {
+            for (IPositionChangeObserver observer : this.observers) {
+                observer.positionUpdated(this.position);
+            }
+        }
+
         if (this.map.canMoveTo(target)) {
             Object object = this.map.objectAt(target);
             if (object instanceof IMapElement) {

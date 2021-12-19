@@ -21,4 +21,6 @@ public interface IMapElement {
      * Return the symbol of the object as a string of length 1.
      */
     String toString();
+
+    String getImagePath();
 }

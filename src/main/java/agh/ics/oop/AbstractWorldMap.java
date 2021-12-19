@@ -36,30 +36,23 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
     }
 
     public Vector2d getRandomEmptyTile(Rect2D area){
-        int width = area.getDimensions().x;
-        int height = area.getDimensions().y;
-        assert width > 0 && height > 0;
-        int flatAreaLength = width*height;
+        Vector2d position;
+        int trials = 1000;
+        do {
+            position = getRandomTile(area);
+            if (--trials == 0) {
+                return null;
+            }
+        } while (this.isOccupied(position));
+        return position;
+    }
 
-        int nObjects = mapElements.size();
-        int[] occupiedPositions = new int[nObjects + 1];
-        int oP = 0;
-        for (Vector2d position : this.mapElements.keySet()){
-            if (!area.contains(position)) continue;
-            occupiedPositions[oP++] = position.toLinear(area);
-        }
-        occupiedPositions[nObjects] = -1;
-        Arrays.sort(occupiedPositions);
-
-        int[] availablePositions = new int[flatAreaLength];
-        int aP = 0; oP = 0;
-        for (int i = 0; i < flatAreaLength; i++) {
-            if (i != occupiedPositions[oP]) availablePositions[aP++] = i;
-            else oP++;
-        }
-
-        shuffleArray(availablePositions, 1);
-        return new Vector2d(availablePositions[0], area);
+    public static Vector2d getRandomTile(Rect2D region) {
+        Random random = new Random(System.currentTimeMillis());
+        return new Vector2d(
+                region.lowerLeft.x + random.nextInt(region.getDimensions().x),
+                region.lowerLeft.y + random.nextInt(region.getDimensions().y)
+        );
     }
 
     public boolean canMoveTo(Vector2d position) {
@@ -122,4 +115,6 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
     public Rect2D getBoundingBox() {
         return this.mapBoundary.getBoundingBox();
     }
+
+    public void positionUpdated(Vector2d position) {}
 }
